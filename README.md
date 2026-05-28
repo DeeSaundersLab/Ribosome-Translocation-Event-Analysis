@@ -1,33 +1,94 @@
-# Ribosome Translocation Event Analysis Pipeline
+# Nanopore Electrophysiology & Ribosome Translocation Analysis Toolkit
 
-A Python pipeline for analysing nanopore ribosome translocation experiments from exported CSV event files. The script automatically concatenates replicates, detects monophasic and biphasic events, performs data cleaning, extracts experiment metadata from folder structures, and generates publication-quality visualisations for dwell time and amplitude analysis.
+A collection of Python pipelines for analysing nanopore electrophysiology experiments, ribosome translocation events, ionic current traces, and nanopore conductance measurements.
 
-Designed for single-molecule nanopore electrophysiology workflows involving ribosomal subunits and translocation event characterisation.
+The repository automates workflows from raw `.abf` recordings to publication-quality figures, event classification, I–V analysis, and nanopore size estimation.
+
+Designed for quartz nanopipette and solid-state nanopore experiments involving ribosomal subunits, polymer electrolytes, and single-molecule translocation studies.
 
 ---
 
-# Features
+# Repository Contents
 
-* Automatic metadata detection from folder names:
+## 1. Ribosome Translocation Event Analysis Pipeline
 
-  * Ribosomal subunits
-  * Concentration
-  * Applied voltage
-* Concatenates multiple replicate CSV files
-* Cleans and standardises event datasets
-* Detects:
+Processes nanopore event CSV files to detect and classify:
 
-  * Monophasic events
-  * Biphasic translocation events
-* Extracts event coordinates and timing
-* Generates:
+* Monophasic events
+* Biphasic events
+* Ribosome translocation signatures
 
-  * Joint scatter/histogram plots
-  * Grid comparison plots
-  * Monophasic vs biphasic comparisons
-* Produces publication-quality figures at 600 DPI
-* Automatically organises outputs into timestamped folders
-* Copies original input CSVs and analysis script for reproducibility
+### Features
+
+* Automatic metadata detection from folder structure
+* Replicate concatenation
+* Event cleaning and parsing
+* Biphasic event merging
+* Dwell time vs amplitude analysis
+* Publication-quality scatter/histogram plots
+* Event classification exports
+
+### Outputs
+
+* Processed CSV datasets
+* Monophasic/biphasic event tables
+* Joint plots
+* Grid comparison figures
+
+---
+
+## 2. I–V Curve & Nanopore Size Estimator
+
+Processes electrophysiology `.abf` files to generate:
+
+* I–V curves
+* Linear regression fits
+* Conductance measurements
+* Nanopore resistance calculations
+* Nanopore diameter estimations
+
+### Features
+
+* ABF → CSV conversion
+* Electrolyte auto-detection
+* Mean ± SEM analysis
+* Combined replicate plotting
+* Nanopore geometry estimation
+* Publication-quality I–V figures
+
+### Supported Electrolytes
+
+* 0.1 M KCl
+* 3 M KCl
+* PEG + KCl systems
+
+### Outputs
+
+* I–V CSV datasets
+* Regression summaries
+* Conductance plots
+* Nanopore size estimation tables
+
+---
+
+## 3. Ionic Current Plotting Pipeline
+
+Visualises ionic current traces directly from `.abf` files.
+
+### Features
+
+* Automatic sample detection from file paths
+* Global y-axis normalisation
+* Individual trace plotting
+* Combined trace plotting
+* Consistent colour coding for ribosomal subunits
+* High-resolution PNG export
+
+### Outputs
+
+* Single-trace current plots
+* Combined ionic current overlays
+* Timestamped figure folders
 
 ---
 
@@ -35,103 +96,64 @@ Designed for single-molecule nanopore electrophysiology workflows involving ribo
 
 Useful for:
 
-* Nanopore ribosome translocation analysis
-* Single-molecule electrophysiology
-* Event classification workflows
-* Dwell time and blockade amplitude analysis
-* Quartz nanopipette nanopore experiments
-* Ribosomal subunit comparison studies
+* Nanopore electrophysiology
+* Quartz nanopipette analysis
+* Ribosome translocation studies
+* Single-molecule sensing
+* Solid-state nanopore research
+* Conductance and resistance measurements
+* Polymer electrolyte nanopore systems
 
 ---
 
 # Dependencies
 
-Install required packages using:
+Install required packages:
 
 ```bash
-pip install pandas numpy matplotlib seaborn
+pip install numpy pandas matplotlib seaborn pyabf
 ```
 
 ---
 
-# Input Requirements
+# Supported File Types
 
-The pipeline expects CSV event files exported from nanopore event detection software.
-
-Required columns include:
-
-```text
-Coordinates
-Direction
-Amplitude (pA)
-Duration (ms)
-Area (pC)
-```
+| File Type | Purpose                                |
+| --------- | -------------------------------------- |
+| `.abf`    | Electrophysiology recordings           |
+| `.csv`    | Event detection and processed datasets |
+| `.png`    | Publication-quality exported figures   |
 
 ---
 
-# Folder Structure
-
-The script extracts metadata directly from the folder hierarchy.
-
-Example:
+# Example Workflow
 
 ```text
-80S/
-├── 3.25ng/
-│   ├── -700mV/
-│   │   ├── baseline -1650/
-│   │   │   ├── rep1.csv
-│   │   │   ├── rep2.csv
+Raw ABF Files
+      ↓
+Ionic Current Plotting
+      ↓
+Event Detection CSVs
+      ↓
+Translocation Event Analysis
+      ↓
+I–V Analysis & Nanopore Estimation
+      ↓
+Publication Figures & Processed Data
 ```
-
-Detected metadata:
-
-* Sample: 80S
-* Concentration: 3.25 ng
-* Voltage: -700 mV
-
----
-
-# Biphasic Event Detection
-
-The pipeline identifies biphasic events by detecting sequential:
-
-```text
-Up event → Down event
-```
-
-with overlapping or adjacent coordinates.
-
-Merged biphasic events include:
-
-* Combined amplitude
-* Combined duration
-* Combined event area
-* Shared event IDs
-
-Both processed and unprocessed biphasic datasets are exported.
 
 ---
 
 # Generated Outputs
 
-The script automatically creates:
+The toolkit automatically creates timestamped output folders containing:
 
 ```text
 Processed_TIMESTAMP/
 ├── CSV/
-│   ├── concatenated_input.csv
-│   ├── monophasic.csv
-│   ├── biphasic.csv
-│   ├── unprocessed_biphasic.csv
-│
 ├── Graphs/
-│   ├── all_events.png
-│   ├── monophasic_events.png
-│   ├── biphasic_events.png
-│   ├── grid_events.png
-│
+├── Plots/
+├── Linear_Regression/
 ├── Input_CSVs/
 ```
 
@@ -139,45 +161,34 @@ Processed_TIMESTAMP/
 
 # Visualisations
 
-Generated plots include:
+Generated figures include:
 
-* Dwell time vs amplitude scatter plots
+* Ionic current traces
+* Dwell time vs amplitude plots
 * Marginal histograms
-* Event-type comparisons
-* Replicate-combined datasets
-* Publication-ready figures with consistent axis scaling
+* Monophasic vs biphasic comparisons
+* I–V curves
+* Linear regression fits
+* Mean ± SEM conductance plots
+* Combined replicate overlays
+
+All figures are exported as high-resolution PNGs suitable for publication and presentations.
 
 ---
 
 # Usage
 
-1. Set the input folder path:
-
-```python
-input_folder = "path/to/experiment/folder"
-```
-
-2. Run the script:
+1. Set the input folder path within the script
+2. Run the desired pipeline:
 
 ```bash
-python ribosome_translocation_pipeline.py
+python script_name.py
 ```
 
 3. Processed data and figures will be generated automatically.
 
 ---
 
-# Output Filtering
-
-Plots are filtered to:
-
-* Duration: 0–6 ms
-* Amplitude: 0–900 pA
-
-This improves visual consistency for nanopore translocation event analysis.
-
----
-
 # Notes
 
-Developed for nanopore-based ribosome translocation experiments using quartz nanopipettes and solid-state nanopore electrophysiology workflows.
+Developed for nanopore-based ribosome translocation and electrophysiology workflows using quartz nanopipettes and Axon Instruments recording systems.
